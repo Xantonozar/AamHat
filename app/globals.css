@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --mango-yellow: #fdbe02;
+  --light-yellow: #fff8b0;
+  --orange: #ffa94d;
+  --light-orange: #ffd9a0;
+  --light-green: #a7d46f;
+  --dark-green: #295a43;
+}
+
+@layer base {
+  body {
+    background-color: #fffdf7;
+    color: #1f2937;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#FDBE02] hover:bg-[#FFA94D] text-[#295A43] font-bold py-2 px-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply bg-[#295A43] hover:bg-[#1D3F2F] text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-[1.02];
+  }
+
+  .section-title {
+    @apply text-3xl md:text-4xl font-bold text-center mb-10 text-[#295A43];
+  }
+
+  .section-subtitle {
+    @apply text-xl text-center mb-16 text-[#295A43]/80;
+  }
+}
