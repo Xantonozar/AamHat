@@ -111,7 +111,7 @@ export function Sidebar() {
               {/* Header */}
               <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700">
                 <Link href="/" className="text-xl font-bold text-[#295A43] dark:text-white">
-                  Mango<span className="text-[#FDBE02]">Market</span>
+                  আম<span className="text-[#FDBE02]">GO</span>
                 </Link>
                 <Button
                   variant="ghost"
