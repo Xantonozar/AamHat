@@ -107,7 +107,7 @@ export default function Home() {
             <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
               <h1 className="text-4xl md:text-6xl font-bold text-center mb-4">Discover Premium Varieties</h1>
               <p className="text-xl md:text-2xl mb-8 text-center max-w-2xl">
-                From Alphonso to Kesar, explore the finest mangoes
+                From Himsagar to Amropali, explore the finest mangoes
               </p>
               <Button
                 size="lg"
