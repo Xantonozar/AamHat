@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -16,6 +15,12 @@ interface AddressFormProps {
 }
 
 export function AddressForm({ title, address, onAddressChange }: AddressFormProps) {
+  // Use a ref to track if this is the initial render
+  const initialRenderRef = useRef(true)
+
+  // Use a ref to track if we should call onAddressChange
+  const shouldUpdateParentRef = useRef(false)
+
   const [formData, setFormData] = useState<Address>({
     fullName: "",
     addressLine1: "",
@@ -25,16 +30,18 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
     postalCode: "",
     country: "United States",
     phone: "",
-    ...address,
+    ...(address || {}),
   })
 
+  // Only update local state when address prop changes
   useEffect(() => {
-    if (address) {
+    if (address && JSON.stringify(address) !== JSON.stringify(formData)) {
       setFormData(address)
     }
   }, [address])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle input changes
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
 
     let formattedValue = value
@@ -47,18 +54,34 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
 
     setFormData((prev) => {
       const newData = { ...prev, [name]: formattedValue }
-      onAddressChange(newData)
+      shouldUpdateParentRef.current = true
       return newData
     })
-  }
+  }, [])
 
-  const handleSelectChange = (name: string, value: string) => {
+  // Handle select changes
+  const handleSelectChange = useCallback((value: string) => {
     setFormData((prev) => {
-      const newData = { ...prev, [name]: value }
-      onAddressChange(newData)
+      const newData = { ...prev, country: value }
+      shouldUpdateParentRef.current = true
       return newData
     })
-  }
+  }, [])
+
+  // Notify parent component of changes, but only when formData changes due to user input
+  useEffect(() => {
+    // Skip the first render
+    if (initialRenderRef.current) {
+      initialRenderRef.current = false
+      return
+    }
+
+    // Only call onAddressChange if the update was triggered by user input
+    if (shouldUpdateParentRef.current) {
+      onAddressChange(formData)
+      shouldUpdateParentRef.current = false
+    }
+  }, [formData, onAddressChange])
 
   return (
     <div className="space-y-4">
@@ -66,9 +89,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
 
       <div className="space-y-4">
         <div>
-          <Label htmlFor="fullName">Full Name</Label>
+          <Label htmlFor={`${title}-fullName`}>Full Name</Label>
           <Input
-            id="fullName"
+            id={`${title}-fullName`}
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
@@ -79,9 +102,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
         </div>
 
         <div>
-          <Label htmlFor="addressLine1">Address Line 1</Label>
+          <Label htmlFor={`${title}-addressLine1`}>Address Line 1</Label>
           <Input
-            id="addressLine1"
+            id={`${title}-addressLine1`}
             name="addressLine1"
             value={formData.addressLine1}
             onChange={handleChange}
@@ -92,9 +115,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
         </div>
 
         <div>
-          <Label htmlFor="addressLine2">Address Line 2 (Optional)</Label>
+          <Label htmlFor={`${title}-addressLine2`}>Address Line 2 (Optional)</Label>
           <Input
-            id="addressLine2"
+            id={`${title}-addressLine2`}
             name="addressLine2"
             value={formData.addressLine2 || ""}
             onChange={handleChange}
@@ -105,9 +128,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="city">City</Label>
+            <Label htmlFor={`${title}-city`}>City</Label>
             <Input
-              id="city"
+              id={`${title}-city`}
               name="city"
               value={formData.city}
               onChange={handleChange}
@@ -118,9 +141,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
           </div>
 
           <div>
-            <Label htmlFor="state">State/Province</Label>
+            <Label htmlFor={`${title}-state`}>State/Province</Label>
             <Input
-              id="state"
+              id={`${title}-state`}
               name="state"
               value={formData.state}
               onChange={handleChange}
@@ -133,9 +156,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="postalCode">Postal Code</Label>
+            <Label htmlFor={`${title}-postalCode`}>Postal Code</Label>
             <Input
-              id="postalCode"
+              id={`${title}-postalCode`}
               name="postalCode"
               value={formData.postalCode}
               onChange={handleChange}
@@ -146,9 +169,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
           </div>
 
           <div>
-            <Label htmlFor="country">Country</Label>
-            <Select value={formData.country} onValueChange={(value) => handleSelectChange("country", value)}>
-              <SelectTrigger id="country" className="mt-1">
+            <Label htmlFor={`${title}-country`}>Country</Label>
+            <Select defaultValue={formData.country} onValueChange={handleSelectChange}>
+              <SelectTrigger id={`${title}-country`} className="mt-1">
                 <SelectValue placeholder="Select country" />
               </SelectTrigger>
               <SelectContent>
@@ -162,9 +185,9 @@ export function AddressForm({ title, address, onAddressChange }: AddressFormProp
         </div>
 
         <div>
-          <Label htmlFor="phone">Phone Number</Label>
+          <Label htmlFor={`${title}-phone`}>Phone Number</Label>
           <Input
-            id="phone"
+            id={`${title}-phone`}
             name="phone"
             value={formData.phone}
             onChange={handleChange}

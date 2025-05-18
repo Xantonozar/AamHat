@@ -1,5 +1,6 @@
 "use client"
 
+import { useCallback } from "react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import type { ShippingMethod } from "@/context/checkout-context"
@@ -10,11 +11,19 @@ interface ShippingMethodSelectorProps {
 }
 
 export function ShippingMethodSelector({ selectedMethod, onMethodChange }: ShippingMethodSelectorProps) {
+  // Memoize the value change handler
+  const handleValueChange = useCallback(
+    (value: string) => {
+      onMethodChange(value as ShippingMethod)
+    },
+    [onMethodChange],
+  )
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-[#295A43] dark:text-white">Shipping Method</h3>
 
-      <RadioGroup value={selectedMethod} onValueChange={(value) => onMethodChange(value as ShippingMethod)}>
+      <RadioGroup value={selectedMethod} onValueChange={handleValueChange}>
         <div className="space-y-3">
           <div className="flex items-center space-x-2 border p-3 rounded-md dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-[#1D3F2F] cursor-pointer">
             <RadioGroupItem value="standard" id="standard" />

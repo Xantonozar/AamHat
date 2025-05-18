@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/context/cart-context"
 import { generateOrderId } from "@/lib/checkout-utils"
@@ -77,50 +77,55 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 
   // Load checkout state from localStorage on initial render
   useEffect(() => {
-    const storedCheckout = localStorage.getItem("checkout")
-    if (storedCheckout) {
-      try {
-        setState(JSON.parse(storedCheckout))
-      } catch (error) {
-        console.error("Failed to parse checkout from localStorage:", error)
+    if (typeof window !== "undefined") {
+      const storedCheckout = localStorage.getItem("checkout")
+      if (storedCheckout) {
+        try {
+          setState(JSON.parse(storedCheckout))
+        } catch (error) {
+          console.error("Failed to parse checkout from localStorage:", error)
+        }
       }
     }
   }, [])
 
   // Save checkout state to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("checkout", JSON.stringify(state))
+    if (typeof window !== "undefined") {
+      localStorage.setItem("checkout", JSON.stringify(state))
+    }
   }, [state])
 
-  const setStep = (step: CheckoutState["step"]) => {
+  // Memoize all state setters to prevent unnecessary re-renders
+  const setStep = useCallback((step: CheckoutState["step"]) => {
     setState((prev) => ({ ...prev, step }))
-  }
+  }, [])
 
-  const setShippingAddress = (address: Address) => {
+  const setShippingAddress = useCallback((address: Address) => {
     setState((prev) => ({ ...prev, shippingAddress: address }))
-  }
+  }, [])
 
-  const setBillingAddress = (address: Address) => {
+  const setBillingAddress = useCallback((address: Address) => {
     setState((prev) => ({ ...prev, billingAddress: address }))
-  }
+  }, [])
 
-  const setSameAsShipping = (same: boolean) => {
+  const setSameAsShipping = useCallback((same: boolean) => {
     setState((prev) => ({ ...prev, sameAsShipping: same }))
-  }
+  }, [])
 
-  const setShippingMethod = (method: ShippingMethod) => {
+  const setShippingMethod = useCallback((method: ShippingMethod) => {
     setState((prev) => ({ ...prev, shippingMethod: method }))
-  }
+  }, [])
 
-  const setPaymentMethod = (method: PaymentMethod) => {
+  const setPaymentMethod = useCallback((method: PaymentMethod) => {
     setState((prev) => ({ ...prev, paymentMethod: method }))
-  }
+  }, [])
 
-  const setPaymentDetails = (details: PaymentDetails) => {
+  const setPaymentDetails = useCallback((details: PaymentDetails) => {
     setState((prev) => ({ ...prev, paymentDetails: details }))
-  }
+  }, [])
 
-  const processOrder = async () => {
+  const processOrder = useCallback(async () => {
     // Simulate payment processing delay
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
@@ -150,11 +155,11 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
 
     // Navigate to confirmation page
     router.push("/checkout/confirmation")
-  }
+  }, [state.shippingMethod, clearCart, router])
 
-  const resetCheckout = () => {
+  const resetCheckout = useCallback(() => {
     setState(defaultCheckoutState)
-  }
+  }, [])
 
   // Calculate shipping cost based on shipping method
   const shippingCost =

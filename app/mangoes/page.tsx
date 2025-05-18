@@ -107,7 +107,7 @@ export default function MangoesPage() {
           <SearchBar />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 md:gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 md:gap-10">
           {/* Mobile Filter Toggle */}
           <div className="lg:hidden px-4 mb-4">
             <button
@@ -275,15 +275,22 @@ export default function MangoesPage() {
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{t("tryAdjustingFilters")}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                 {filteredProducts.map((product, index) => (
                   <motion.div
                     key={product.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="h-full"
+                    whileHover={{
+                      y: -5,
+                      transition: { duration: 0.2 },
+                    }}
                   >
-                    <ProductCard product={product} />
+                    <div className="h-full bg-white dark:bg-[#295A43] rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-[#3a7057]">
+                      <ProductCard product={product} />
+                    </div>
                   </motion.div>
                 ))}
               </div>

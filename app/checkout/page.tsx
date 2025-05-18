@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useCallback, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { motion } from "framer-motion"
@@ -13,11 +13,22 @@ import { ShippingMethodSelector } from "@/components/checkout/shipping-method"
 import { OrderSummary } from "@/components/checkout/order-summary"
 import { useCart } from "@/context/cart-context"
 import { useCheckout } from "@/context/checkout-context"
+import type { Address } from "@/context/checkout-context"
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { cartItems } = useCart()
   const { state, setShippingAddress, setBillingAddress, setSameAsShipping, setShippingMethod, setStep } = useCheckout()
+
+  // Local state to prevent unnecessary re-renders from context updates
+  const [shippingAddress, setLocalShippingAddress] = useState<Address | null>(state.shippingAddress)
+  const [billingAddress, setLocalBillingAddress] = useState<Address | null>(state.billingAddress)
+
+  // Sync local state with context state
+  useEffect(() => {
+    setLocalShippingAddress(state.shippingAddress)
+    setLocalBillingAddress(state.billingAddress)
+  }, [state.shippingAddress, state.billingAddress])
 
   // Redirect to cart if cart is empty
   useEffect(() => {
@@ -29,7 +40,32 @@ export default function CheckoutPage() {
     setStep("shipping")
   }, [cartItems.length, router, setStep])
 
-  const handleContinue = () => {
+  // Memoize the address change handlers to prevent recreating them on every render
+  const handleShippingAddressChange = useCallback(
+    (address: Address) => {
+      setShippingAddress(address)
+    },
+    [setShippingAddress],
+  )
+
+  const handleBillingAddressChange = useCallback(
+    (address: Address) => {
+      setBillingAddress(address)
+    },
+    [setBillingAddress],
+  )
+
+  const handleSameAsShippingChange = useCallback(
+    (checked: boolean) => {
+      setSameAsShipping(checked)
+      if (checked && state.shippingAddress) {
+        setBillingAddress(state.shippingAddress)
+      }
+    },
+    [setSameAsShipping, setBillingAddress, state.shippingAddress],
+  )
+
+  const handleContinue = useCallback(() => {
     if (!state.shippingAddress) {
       alert("Please fill in your shipping address")
       return
@@ -43,7 +79,7 @@ export default function CheckoutPage() {
     }
 
     router.push("/checkout/payment")
-  }
+  }, [state.shippingAddress, state.billingAddress, state.sameAsShipping, setBillingAddress, router])
 
   if (cartItems.length === 0) {
     return null // Will redirect in useEffect
@@ -94,11 +130,7 @@ export default function CheckoutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <AddressForm
-                title="Shipping Address"
-                address={state.shippingAddress}
-                onAddressChange={setShippingAddress}
-              />
+              <AddressForm title="Shipping" address={shippingAddress} onAddressChange={handleShippingAddressChange} />
             </motion.div>
 
             <motion.div
@@ -120,17 +152,13 @@ export default function CheckoutPage() {
                 <Checkbox
                   id="sameAsShipping"
                   checked={state.sameAsShipping}
-                  onCheckedChange={(checked) => setSameAsShipping(checked as boolean)}
+                  onCheckedChange={(checked) => handleSameAsShippingChange(checked as boolean)}
                 />
                 <Label htmlFor="sameAsShipping">Billing address same as shipping address</Label>
               </div>
 
               {!state.sameAsShipping && (
-                <AddressForm
-                  title="Billing Address"
-                  address={state.billingAddress}
-                  onAddressChange={setBillingAddress}
-                />
+                <AddressForm title="Billing" address={billingAddress} onAddressChange={handleBillingAddressChange} />
               )}
             </motion.div>
 
