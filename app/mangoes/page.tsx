@@ -10,6 +10,7 @@ import ProductCard from "@/components/product-card"
 import { SearchBar } from "@/components/search-bar"
 import { products } from "@/data/products"
 import { useTranslation } from "@/context/translation-context"
+import { Filter, X } from "lucide-react"
 
 export default function MangoesPage() {
   const { t } = useTranslation()
@@ -25,6 +26,19 @@ export default function MangoesPage() {
 
   // Get unique categories
   const categories = Array.from(new Set(products.map((product) => product.category)))
+
+  // Prevent body scroll when filter sidebar is open on mobile
+  useEffect(() => {
+    if (isFilterOpen && window.innerWidth < 1024) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = "auto"
+    }
+
+    return () => {
+      document.body.style.overflow = "auto"
+    }
+  }, [isFilterOpen])
 
   useEffect(() => {
     let filtered = [...products]
@@ -78,44 +92,69 @@ export default function MangoesPage() {
 
   return (
     <div className="dark:bg-[#1D3F2F] dark:text-white">
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto py-6 sm:py-8 md:py-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-          <h1 className="text-3xl md:text-4xl font-bold text-center mb-4 text-[#295A43] dark:text-white">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-2 sm:mb-4 text-[#295A43] dark:text-white">
             {t("exploreMangoes")}
           </h1>
-          <p className="text-lg text-center mb-8 text-[#295A43]/80 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-center mb-4 sm:mb-6 md:mb-8 text-[#295A43]/80 dark:text-gray-300 max-w-3xl mx-auto px-4">
             {t("discoverMangoes")}
           </p>
         </motion.div>
 
         {/* Search Bar */}
-        <div className="max-w-md mx-auto mb-12">
+        <div className="max-w-md mx-auto mb-6 sm:mb-8 md:mb-12 px-4">
           <SearchBar />
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 md:gap-8">
           {/* Mobile Filter Toggle */}
-          <div className="lg:hidden mb-4">
+          <div className="lg:hidden px-4 mb-4">
             <button
               onClick={() => setIsFilterOpen(!isFilterOpen)}
-              className="w-full bg-[#295A43] text-white py-2 px-4 rounded-lg dark:bg-[#FDBE02] dark:text-[#295A43]"
+              className="w-full flex items-center justify-center bg-[#295A43] text-white py-2 px-4 rounded-lg dark:bg-[#FDBE02] dark:text-[#295A43] text-sm sm:text-base"
             >
+              <Filter className="w-4 h-4 mr-2" />
               {isFilterOpen ? t("hideFilters") : t("showFilters")}
             </button>
           </div>
 
-          {/* Filters */}
+          {/* Filters - Mobile Overlay */}
+          {isFilterOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-black lg:hidden z-40"
+              onClick={() => setIsFilterOpen(false)}
+            />
+          )}
+
+          {/* Filters - Sidebar */}
           <motion.div
-            className={`lg:w-1/4 bg-white p-6 rounded-xl shadow-md ${isFilterOpen ? "block" : "hidden lg:block"} dark:bg-[#295A43]`}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
+            className={`fixed top-0 left-0 bottom-0 w-72 lg:w-1/4 lg:static bg-white p-4 sm:p-5 md:p-6 rounded-none lg:rounded-xl shadow-xl lg:shadow-md overflow-y-auto z-50 ${
+              isFilterOpen ? "block" : "hidden lg:block"
+            } dark:bg-[#295A43]`}
+            initial={isFilterOpen ? { x: "-100%" } : { opacity: 0, x: -20 }}
+            animate={isFilterOpen ? { x: 0 } : { opacity: 1, x: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            <h2 className="text-xl font-bold mb-6 text-[#295A43] dark:text-white">{t("filters")}</h2>
+            <div className="flex items-center justify-between mb-4 lg:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-[#295A43] dark:text-white">{t("filters")}</h2>
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 lg:hidden"
+              >
+                <X className="w-5 h-5 text-[#295A43] dark:text-white" />
+              </button>
+            </div>
 
             {/* Price Range */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-[#295A43] dark:text-white">{t("priceRange")}</h3>
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-[#295A43] dark:text-white">
+                {t("priceRange")}
+              </h3>
               <Slider
                 defaultValue={[0, 30]}
                 max={30}
@@ -124,15 +163,17 @@ export default function MangoesPage() {
                 onValueChange={setPriceRange}
                 className="mb-2"
               />
-              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300">
+              <div className="flex justify-between text-xs sm:text-sm text-gray-600 dark:text-gray-300">
                 <span>${priceRange[0]}</span>
                 <span>${priceRange[1]}</span>
               </div>
             </div>
 
             {/* Categories */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-[#295A43] dark:text-white">{t("category")}</h3>
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-[#295A43] dark:text-white">
+                {t("category")}
+              </h3>
               <div className="space-y-2">
                 {categories.map((category) => (
                   <div key={category} className="flex items-center">
@@ -141,7 +182,10 @@ export default function MangoesPage() {
                       checked={selectedCategories.includes(category)}
                       onCheckedChange={() => handleCategoryChange(category)}
                     />
-                    <Label htmlFor={`category-${category}`} className="ml-2 text-gray-700 dark:text-gray-300">
+                    <Label
+                      htmlFor={`category-${category}`}
+                      className="ml-2 text-sm sm:text-base text-gray-700 dark:text-gray-300"
+                    >
                       {t("category")} {category}
                     </Label>
                   </div>
@@ -150,9 +194,11 @@ export default function MangoesPage() {
             </div>
 
             {/* Origins */}
-            <div className="mb-8">
-              <h3 className="text-lg font-semibold mb-4 text-[#295A43] dark:text-white">{t("origin")}</h3>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+            <div className="mb-6 sm:mb-8">
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-[#295A43] dark:text-white">
+                {t("origin")}
+              </h3>
+              <div className="space-y-2 max-h-36 sm:max-h-48 overflow-y-auto pr-2">
                 {origins.map((origin) => (
                   <div key={origin} className="flex items-center">
                     <Checkbox
@@ -160,7 +206,10 @@ export default function MangoesPage() {
                       checked={selectedOrigins.includes(origin)}
                       onCheckedChange={() => handleOriginChange(origin)}
                     />
-                    <Label htmlFor={`origin-${origin}`} className="ml-2 text-gray-700 dark:text-gray-300">
+                    <Label
+                      htmlFor={`origin-${origin}`}
+                      className="ml-2 text-sm sm:text-base text-gray-700 dark:text-gray-300"
+                    >
                       {origin}
                     </Label>
                   </div>
@@ -170,51 +219,63 @@ export default function MangoesPage() {
 
             {/* Sort Order */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-[#295A43] dark:text-white">{t("sortBy")}</h3>
+              <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-[#295A43] dark:text-white">
+                {t("sortBy")}
+              </h3>
               <RadioGroup value={sortOrder} onValueChange={setSortOrder}>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mb-2">
                   <RadioGroupItem value="default" id="sort-default" />
-                  <Label htmlFor="sort-default" className="dark:text-gray-300">
+                  <Label htmlFor="sort-default" className="text-sm sm:text-base dark:text-gray-300">
                     {t("default")}
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mb-2">
                   <RadioGroupItem value="price-asc" id="sort-price-asc" />
-                  <Label htmlFor="sort-price-asc" className="dark:text-gray-300">
+                  <Label htmlFor="sort-price-asc" className="text-sm sm:text-base dark:text-gray-300">
                     {t("priceLowToHigh")}
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mb-2">
                   <RadioGroupItem value="price-desc" id="sort-price-desc" />
-                  <Label htmlFor="sort-price-desc" className="dark:text-gray-300">
+                  <Label htmlFor="sort-price-desc" className="text-sm sm:text-base dark:text-gray-300">
                     {t("priceHighToLow")}
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 mb-2">
                   <RadioGroupItem value="name-asc" id="sort-name-asc" />
-                  <Label htmlFor="sort-name-asc" className="dark:text-gray-300">
+                  <Label htmlFor="sort-name-asc" className="text-sm sm:text-base dark:text-gray-300">
                     {t("nameAToZ")}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="name-desc" id="sort-name-desc" />
-                  <Label htmlFor="sort-name-desc" className="dark:text-gray-300">
+                  <Label htmlFor="sort-name-desc" className="text-sm sm:text-base dark:text-gray-300">
                     {t("nameZToA")}
                   </Label>
                 </div>
               </RadioGroup>
             </div>
+
+            {/* Apply Filters Button (Mobile Only) */}
+            <div className="mt-6 lg:hidden">
+              <button
+                onClick={() => setIsFilterOpen(false)}
+                className="w-full bg-[#FDBE02] text-[#295A43] font-medium py-2 px-4 rounded-lg"
+              >
+                {t("applyFilters")}
+              </button>
+            </div>
           </motion.div>
 
           {/* Products Grid */}
-          <div className="lg:w-3/4">
+          <div className="lg:w-3/4 px-4 lg:px-0">
             {filteredProducts.length === 0 ? (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-semibold mb-2 dark:text-white">{t("noProductsFound")}</h3>
-                <p className="text-gray-600 dark:text-gray-300">{t("tryAdjustingFilters")}</p>
+              <div className="text-center py-8 sm:py-12">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 dark:text-white">{t("noProductsFound")}</h3>
+                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">{t("tryAdjustingFilters")}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                 {filteredProducts.map((product, index) => (
                   <motion.div
                     key={product.id}

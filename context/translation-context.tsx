@@ -67,75 +67,99 @@ const languages = {
     nameAToZ: "Name: A to Z",
     nameZToA: "Name: Z to A",
     recipes: "Recipes",
+    profile: "Profile",
+    light_mode: "Light Mode",
+    dark_mode: "Dark Mode",
+    language: "Language",
+    english: "English",
+    bangla: "Bangla",
+    currentLanguage: "Current Language",
+    // Add error page translations
+    tryAgain: "Try Again",
+    backToHome: "Back to Home",
+    oops: "Oops!",
+    somethingWentWrong: "Something went wrong",
+    apologize: "We apologize for the inconvenience. Please try again or return to the homepage.",
   },
-  es: {
-    home: "Inicio",
-    mangoes: "Mangos",
-    about: "Acerca de",
-    contact: "Contacto",
-    cart: "Carrito",
-    wishlist: "Favoritos",
-    buyNow: "Comprar Ahora",
-    shopNow: "Comprar Ahora",
-    addToCart: "Añadir al Carrito",
-    moveToCart: "Mover al Carrito",
-    removeFromWishlist: "Quitar de Favoritos",
-    addToWishlist: "Añadir a Favoritos",
-    emptyCart: "Tu Carrito está Vacío",
-    emptyWishlist: "Tu Lista de Favoritos está Vacía",
-    continueShopping: "Continuar Comprando",
-    checkout: "Finalizar Compra",
-    total: "Total",
-    subtotal: "Subtotal",
-    shipping: "Envío",
-    quantity: "Cantidad",
-    price: "Precio",
-    category: "Categoría",
-    origin: "Origen",
-    sortBy: "Ordenar Por",
-    priceRange: "Rango de Precio",
-    filters: "Filtros",
-    showFilters: "Mostrar Filtros",
-    hideFilters: "Ocultar Filtros",
-    haveAMango: "Llévate un Mango para el Camino.",
-    premiumMangoes: "Mangos premium entregados frescos a tu puerta",
-    whyChooseUs: "Por Qué Elegirnos",
-    featuredMangoes: "Mangos Destacados",
-    handpickedSelection: "Selección cuidadosa de nuestras mejores variedades",
-    viewAllMangoes: "Ver Todos los Mangos",
-    exploreMangoes: "Explora Nuestros Mangos",
-    discoverMangoes: "Descubre nuestra selección premium de mangos provenientes de las mejores granjas del mundo.",
-    getInTouch: "Contáctanos",
-    haveQuestions: "¿Tienes preguntas? ¡Nos encantaría saber de ti!",
-    yourName: "Tu Nombre",
-    yourEmail: "Tu Email",
-    subject: "Asunto",
-    yourMessage: "Tu Mensaje",
-    sendMessage: "Enviar Mensaje",
-    premiumQuality: "Calidad Premium",
-    fastDelivery: "Entrega Rápida",
-    sustainablePractices: "Prácticas Sostenibles",
-    premiumQualityDesc:
-      "Obtenemos solo los mejores mangos de granjas confiables, asegurando calidad premium en cada bocado.",
-    fastDeliveryDesc: "De la granja a tu puerta en 24 horas, garantizando máxima frescura.",
-    sustainablePracticesDesc:
-      "Nos asociamos con granjas que utilizan prácticas agrícolas sostenibles para proteger nuestro medio ambiente.",
-    orderSummary: "Resumen del Pedido",
-    proceedToCheckout: "Proceder al Pago",
-    processing: "Procesando...",
-    youMayAlsoLike: "También Te Puede Gustar",
-    noProductsFound: "No se encontraron productos",
-    tryAdjustingFilters: "Intenta ajustar tus filtros",
-    default: "Predeterminado",
-    priceLowToHigh: "Precio: Menor a Mayor",
-    priceHighToLow: "Precio: Mayor a Menor",
-    nameAToZ: "Nombre: A a Z",
-    nameZToA: "Nombre: Z a A",
-    recipes: "Recetas",
+  bn: {
+    home: "হোম",
+    mangoes: "আম",
+    about: "আমাদের সম্পর্কে",
+    contact: "যোগাযোগ",
+    cart: "কার্ট",
+    wishlist: "ইচ্ছেতালিকা",
+    buyNow: "এখনই কিনুন",
+    shopNow: "এখনই কেনাকাটা করুন",
+    addToCart: "কার্টে যোগ করুন",
+    moveToCart: "কার্টে সরান",
+    removeFromWishlist: "ইচ্ছেতালিকা থেকে সরান",
+    addToWishlist: "ইচ্ছেতালিকায় যোগ করুন",
+    emptyCart: "আপনার কার্ট খালি",
+    emptyWishlist: "আপনার ইচ্ছেতালিকা খালি",
+    continueShopping: "কেনাকাটা চালিয়ে যান",
+    checkout: "চেকআউট",
+    total: "মোট",
+    subtotal: "উপমোট",
+    shipping: "শিপিং",
+    quantity: "পরিমাণ",
+    price: "মূল্য",
+    category: "বিভাগ",
+    origin: "উৎপত্তি",
+    sortBy: "সাজান",
+    priceRange: "মূল্য পরিসীমা",
+    filters: "ফিল্টার",
+    showFilters: "ফিল্টার দেখান",
+    hideFilters: "ফিল্টার লুকান",
+    haveAMango: "চলার পথে একটি আম খান।",
+    premiumMangoes: "প্রিমিয়াম আম সরাসরি আপনার দরজায়",
+    whyChooseUs: "আমাদের কেন বেছে নেবেন",
+    featuredMangoes: "বিশেষ আম",
+    handpickedSelection: "আমাদের সেরা প্রজাতির হাতে বাছাই করা নির্বাচন",
+    viewAllMangoes: "সব আম দেখুন",
+    exploreMangoes: "আমাদের আম অন্বেষণ করুন",
+    discoverMangoes: "বিশ্বের সেরা খামার থেকে সংগ্রহ করা আমাদের প্রিমিয়াম আম আবিষ্কার করুন।",
+    getInTouch: "যোগাযোগ করুন",
+    haveQuestions: "প্রশ্ন আছে? আমরা আপনার কথা শুনতে চাই!",
+    yourName: "আপনার নাম",
+    yourEmail: "আপনার ইমেইল",
+    subject: "বিষয়",
+    yourMessage: "আপনার বার্তা",
+    sendMessage: "বার্তা পাঠান",
+    premiumQuality: "প্রিমিয়াম মান",
+    fastDelivery: "দ্রুত ডেলিভারি",
+    sustainablePractices: "টেকসই অনুশীলন",
+    premiumQualityDesc: "আমরা শুধুমাত্র বিশ্বস্ত খামার থেকে সেরা আম সংগ্রহ করি, প্রতিটি কামড়ে প্রিমিয়াম মান নিশ্চিত করি।",
+    fastDeliveryDesc: "খামার থেকে আপনার দরজায় 24 ঘন্টার মধ্যে, সর্বাধিক তাজা নিশ্চিত করে।",
+    sustainablePracticesDesc: "আমরা এমন খামারের সাথে অংশীদারিত্ব করি যারা আমাদের পরিবেশ রক্ষার জন্য টেকসই কৃষি পদ্ধতি ব্যবহার করে।",
+    orderSummary: "অর্ডার সারাংশ",
+    proceedToCheckout: "চেকআউট করুন",
+    processing: "প্রক্রিয়াকরণ হচ্ছে...",
+    youMayAlsoLike: "আপনি এগুলিও পছন্দ করতে পারেন",
+    noProductsFound: "কোন পণ্য পাওয়া যায়নি",
+    tryAdjustingFilters: "আপনার ফিল্টার সামঞ্জস্য করার চেষ্টা করুন",
+    default: "ডিফল্ট",
+    priceLowToHigh: "মূল্য: কম থেকে বেশি",
+    priceHighToLow: "মূল্য: বেশি থেকে কম",
+    nameAToZ: "নাম: A থেকে Z",
+    nameZToA: "নাম: Z থেকে A",
+    recipes: "রেসিপি",
+    profile: "প্রোফাইল",
+    light_mode: "লাইট মোড",
+    dark_mode: "ডার্ক মোড",
+    language: "ভাষা",
+    english: "ইংরেজি",
+    bangla: "বাংলা",
+    currentLanguage: "বর্তমান ভাষা",
+    // Add error page translations
+    tryAgain: "আবার চেষ্টা করুন",
+    backToHome: "হোমে ফিরে যান",
+    oops: "উফ!",
+    somethingWentWrong: "কিছু ভুল হয়েছে",
+    apologize: "অসুবিধার জন্য আমরা দুঃখিত। অনুগ্রহ করে আবার চেষ্টা করুন বা হোমপেজে ফিরে যান।",
   },
 }
 
-type Locale = "en" | "es"
+type Locale = "en" | "bn"
 type TranslationKey = keyof typeof languages.en
 
 interface TranslationContextType {
@@ -147,20 +171,30 @@ interface TranslationContextType {
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined)
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
+  const [mounted, setMounted] = useState(false)
   const [locale, setLocale] = useState<Locale>("en")
+
+  // Set mounted state after hydration
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Load locale from localStorage on initial render
   useEffect(() => {
-    const storedLocale = localStorage.getItem("locale") as Locale | null
-    if (storedLocale && (storedLocale === "en" || storedLocale === "es")) {
-      setLocale(storedLocale)
+    if (typeof window !== "undefined") {
+      const storedLocale = localStorage.getItem("locale") as Locale | null
+      if (storedLocale && (storedLocale === "en" || storedLocale === "bn")) {
+        setLocale(storedLocale)
+      }
     }
   }, [])
 
   // Save locale to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("locale", locale)
-  }, [locale])
+    if (mounted && typeof window !== "undefined") {
+      localStorage.setItem("locale", locale)
+    }
+  }, [locale, mounted])
 
   const t = (key: TranslationKey): string => {
     return languages[locale][key] || key

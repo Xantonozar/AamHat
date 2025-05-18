@@ -2,20 +2,30 @@ export interface Recipe {
   id: string
   title: string
   description: string
-  image: string
-  prepTime: number
-  cookTime: number
-  servings: number
-  difficulty: "easy" | "medium" | "hard"
   ingredients: string[]
   instructions: string[]
-  relatedProducts: string[]
+  prepTime: number // in minutes
+  cookTime: number // in minutes
+  servings: number
+  difficulty: string
+  image: string
   tags: string[]
-  nutritionalInfo?: {
-    calories: number
-    protein: number
-    carbs: number
-    fat: number
-    fiber: number
-  }
+  author?: string
+  nutritionFacts?: NutritionFacts
+  tips?: string[]
+  variations?: string[]
+  storageInfo?: string
+  relatedRecipes?: string[]
+  datePublished?: string
+  rating?: number
+}
+
+export interface NutritionFacts {
+  calories: number
+  fat: number
+  carbs: number
+  protein: number
+  sugar?: number
+  fiber?: number
+  sodium?: number
 }

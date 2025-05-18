@@ -1,34 +1,24 @@
 "use client"
 
-import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { motion } from "framer-motion"
-import { ShoppingCart, Heart } from "lucide-react"
+import { Heart, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { useCart } from "@/context/cart-context"
 import { useWishlist } from "@/context/wishlist-context"
-import { useTranslation } from "@/context/translation-context"
 import type { Product } from "@/types/product"
 
 interface ProductCardProps {
   product: Product
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
-  const [isHovered, setIsHovered] = useState(false)
-  const { t } = useTranslation()
 
-  const inWishlist = isInWishlist(product.id)
-
-  const handleAddToCart = () => {
-    addToCart(product)
-  }
-
-  const handleToggleWishlist = () => {
-    if (inWishlist) {
+  const toggleWishlist = () => {
+    if (isInWishlist(product.id)) {
       removeFromWishlist(product.id)
     } else {
       addToWishlist(product)
@@ -36,56 +26,52 @@ export default function ProductCard({ product }: ProductCardProps) {
   }
 
   return (
-    <motion.div
-      className="card h-full flex flex-col"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-      whileHover={{ scale: 1.05 }}
-    >
-      <div className="relative overflow-hidden">
-        <Link href={`/mangoes/${product.id}`}>
-          <div className="aspect-square relative">
-            <Image
-              src={product.image || "/placeholder.svg"}
-              alt={product.name}
-              fill
-              className="object-cover transition-transform duration-500 ease-in-out"
-              style={{
-                transform: isHovered ? "scale(1.05)" : "scale(1)",
-              }}
-            />
-          </div>
-        </Link>
+    <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg dark:bg-[#295A43] dark:border-[#3a7057]">
+      <div className="relative aspect-square overflow-hidden">
+        <Image
+          src={product.image || "/placeholder.svg"}
+          alt={product.name}
+          fill
+          className="object-cover transition-transform duration-300 hover:scale-105"
+        />
         <button
-          onClick={handleToggleWishlist}
-          className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md transition-all duration-300 hover:scale-110 dark:bg-[#295A43]"
-          aria-label={inWishlist ? t("removeFromWishlist") : t("addToWishlist")}
+          onClick={toggleWishlist}
+          className="absolute right-2 top-2 rounded-full bg-white p-1.5 dark:bg-[#1a3528]"
+          aria-label={isInWishlist(product.id) ? "Remove from wishlist" : "Add to wishlist"}
         >
           <Heart
-            className={`w-5 h-5 ${inWishlist ? "fill-[#FFA94D] text-[#FFA94D]" : "text-gray-600 dark:text-white"}`}
+            className={`h-5 w-5 ${
+              isInWishlist(product.id) ? "fill-red-500 text-red-500" : "text-gray-600 dark:text-gray-300"
+            }`}
           />
         </button>
       </div>
-      <div className="p-4 flex-grow flex flex-col dark:bg-[#1D3F2F] dark:text-white">
-        <Link href={`/mangoes/${product.id}`}>
-          <h3 className="font-bold text-lg text-[#295A43] mb-1 dark:text-white">{product.name}</h3>
-        </Link>
-        <div className="text-sm text-gray-500 mb-2 dark:text-gray-300">{product.origin}</div>
-        <div className="text-lg font-bold text-[#295A43] mb-4 dark:text-[#FDBE02]">${product.price.toFixed(2)}</div>
-        <div className="mt-auto">
-          <Button
-            onClick={handleAddToCart}
-            className="w-full bg-[#FDBE02] hover:bg-[#FFA94D] text-[#295A43] font-medium transition-all duration-300 dark:text-[#295A43]"
-          >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            {t("addToCart")}
-          </Button>
+      <CardContent className="p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <h3 className="font-semibold dark:text-white">{product.name}</h3>
+          <span className="font-bold text-[#295A43] dark:text-[#FDBE02]">${product.price.toFixed(2)}</span>
         </div>
-      </div>
-    </motion.div>
+        <p className="text-sm text-gray-600 dark:text-gray-300">{product.description}</p>
+      </CardContent>
+      <CardFooter className="flex gap-2 p-4 pt-0">
+        <Button
+          onClick={() => addToCart(product)}
+          className="flex-1 bg-[#FDBE02] text-[#295A43] hover:bg-[#FFA94D] dark:bg-[#FDBE02] dark:text-[#1a3528] dark:hover:bg-[#FFA94D]"
+        >
+          <ShoppingCart className="mr-2 h-4 w-4" />
+          Add to Cart
+        </Button>
+        <Link href={`/mangoes/${product.id}`} className="w-full">
+          <Button
+            variant="outline"
+            className="w-full border-[#295A43] text-[#295A43] hover:bg-[#295A43] hover:text-white dark:border-[#A7D46F] dark:text-[#A7D46F] dark:hover:bg-[#A7D46F] dark:hover:text-[#1a3528]"
+          >
+            View Details
+          </Button>
+        </Link>
+      </CardFooter>
+    </Card>
   )
 }
+
+export default ProductCard

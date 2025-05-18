@@ -1,10 +1,6 @@
-"use client"
-
-import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { motion } from "framer-motion"
-import { Clock, Users, ChefHat } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 import type { Recipe } from "@/types/recipe"
 
 interface RecipeCardProps {
@@ -12,60 +8,31 @@ interface RecipeCardProps {
 }
 
 export function RecipeCard({ recipe }: RecipeCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
-
-  const totalTime = recipe.prepTime + recipe.cookTime
-
   return (
-    <motion.div
-      className="card h-full flex flex-col"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-      whileHover={{ scale: 1.05 }}
-    >
-      <div className="relative overflow-hidden">
-        <Link href={`/recipes/${recipe.id}`}>
-          <div className="aspect-video relative">
-            <Image
-              src={recipe.image || "/placeholder.svg"}
-              alt={recipe.title}
-              fill
-              className="object-cover transition-transform duration-500 ease-in-out"
-              style={{
-                transform: isHovered ? "scale(1.05)" : "scale(1)",
-              }}
-            />
+    <Link href={`/recipes/${recipe.id}`}>
+      <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg dark:bg-[#295A43] dark:border-[#3a7057]">
+        <div className="relative aspect-video overflow-hidden">
+          <Image
+            src={recipe.image || "/placeholder.svg?height=300&width=500"}
+            alt={recipe.title}
+            fill
+            className="object-cover transition-transform duration-300 hover:scale-105"
+          />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+            <span className="inline-block rounded-full bg-[#FDBE02] px-2 py-1 text-xs font-semibold text-[#295A43]">
+              {recipe.difficulty}
+            </span>
           </div>
-        </Link>
-        <div className="absolute top-2 right-2 bg-[#FDBE02] px-2 py-1 rounded-full text-xs font-medium text-[#295A43]">
-          {recipe.difficulty}
         </div>
-      </div>
-      <div className="p-4 flex-grow flex flex-col dark:bg-[#1D3F2F] dark:text-white">
-        <Link href={`/recipes/${recipe.id}`}>
-          <h3 className="font-bold text-lg text-[#295A43] mb-1 dark:text-white">{recipe.title}</h3>
-        </Link>
-        <p className="text-sm text-gray-600 mb-4 dark:text-gray-300 line-clamp-2">{recipe.description}</p>
-
-        <div className="flex items-center justify-between mt-auto text-sm text-gray-500 dark:text-gray-400">
-          <div className="flex items-center">
-            <Clock className="w-4 h-4 mr-1" />
-            <span>{totalTime} min</span>
-          </div>
-          <div className="flex items-center">
-            <Users className="w-4 h-4 mr-1" />
+        <CardContent className="p-4">
+          <h3 className="mb-2 text-lg font-semibold text-[#295A43] dark:text-white">{recipe.title}</h3>
+          <p className="mb-2 text-sm text-gray-600 dark:text-gray-300">{recipe.description}</p>
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+            <span>{recipe.prepTime + recipe.cookTime} mins</span>
             <span>{recipe.servings} servings</span>
           </div>
-          <div className="flex items-center">
-            <ChefHat className="w-4 h-4 mr-1" />
-            <span>{recipe.difficulty}</span>
-          </div>
-        </div>
-      </div>
-    </motion.div>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }

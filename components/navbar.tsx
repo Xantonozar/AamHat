@@ -3,21 +3,21 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
-import { ShoppingCart, Heart, Menu, X } from "lucide-react"
+import { ShoppingCart, Heart, Search } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { Sidebar } from "@/components/sidebar"
 import { useCart } from "@/context/cart-context"
 import { useWishlist } from "@/context/wishlist-context"
 import { useTranslation } from "@/context/translation-context"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { LanguageSwitcher } from "@/components/language-switcher"
+import { Button } from "@/components/ui/button"
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const { cartItems } = useCart()
   const { wishlistItems } = useWishlist()
-  const { t, locale } = useTranslation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -33,122 +33,94 @@ export default function Navbar() {
   }, [])
 
   const navLinks = [
-    { name: t("home"), path: "/" },
-    { name: t("mangoes"), path: "/mangoes" },
-    { name: t("recipes"), path: "/recipes" },
-    { name: t("about"), path: "/about" },
-    { name: t("contact"), path: "/contact" },
+    { href: "/", label: t("home") },
+    { href: "/mangoes", label: t("mangoes") },
+    { href: "/recipes", label: t("recipes") },
+    { href: "/about", label: t("about") },
+    { href: "/contact", label: t("contact") },
   ]
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white shadow-md py-2 dark:bg-[#1D3F2F] dark:text-white" : "bg-transparent py-4"
+        isScrolled ? "bg-white shadow-md py-2 dark:bg-[#1a3528] dark:shadow-[#0a1a14]" : "bg-transparent py-3 sm:py-4"
       }`}
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <span className={`text-2xl font-bold ${isScrolled ? "text-[#295A43] dark:text-white" : "text-white"}`}>
-              Mango<span className="text-[#FDBE02]">Market</span>
-            </span>
-          </Link>
+          <div className="flex items-center">
+            {/* Sidebar for mobile */}
+            <div className="md:hidden">
+              <Sidebar />
+            </div>
+
+            <Link href="/" className="flex items-center ml-2 md:ml-0">
+              <span
+                className={`text-xl sm:text-2xl font-bold ${isScrolled ? "text-[#295A43] dark:text-white" : "text-[#295A43] dark:text-white"}`}
+              >
+                Mango<span className="text-[#FDBE02]">Market</span>
+              </span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navLinks.map((link) => (
               <Link
-                key={link.path}
-                href={link.path}
-                className={`text-lg font-medium transition-colors duration-300 ${
-                  pathname === link.path
+                key={link.href}
+                href={link.href}
+                className={`text-base lg:text-lg font-medium transition-colors duration-300 ${
+                  pathname === link.href
                     ? "text-[#FDBE02]"
                     : isScrolled
                       ? "text-[#295A43] hover:text-[#FDBE02] dark:text-white dark:hover:text-[#FDBE02]"
-                      : "text-white hover:text-[#FDBE02]"
+                      : "text-[#295A43] hover:text-[#FDBE02] dark:text-white dark:hover:text-[#FDBE02]"
                 }`}
               >
-                {link.name}
+                {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* Cart and Wishlist Icons */}
-          <div className="flex items-center space-x-4">
-            <ThemeToggle />
-            <LanguageSwitcher />
+          {/* Cart, Wishlist, Theme Toggle, Language Switcher */}
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <Link href="/search">
+              <Button variant="ghost" size="icon" className="text-[#295A43] dark:text-white">
+                <Search className="h-5 w-5" />
+                <span className="sr-only">Search</span>
+              </Button>
+            </Link>
             <Link href="/wishlist" className="relative">
-              <Heart
-                className={`w-6 h-6 transition-colors duration-300 ${isScrolled ? "text-[#295A43] dark:text-white" : "text-white"}`}
-              />
-              {wishlistItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#FDBE02] text-[#295A43] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {wishlistItems.length}
-                </span>
-              )}
+              <Button variant="ghost" size="icon" className="text-[#295A43] dark:text-white">
+                <Heart className="h-5 w-5" />
+                {wishlistItems.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#FDBE02] text-[#295A43] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {wishlistItems.length}
+                  </span>
+                )}
+                <span className="sr-only">Wishlist</span>
+              </Button>
             </Link>
             <Link href="/cart" className="relative">
-              <ShoppingCart
-                className={`w-6 h-6 transition-colors duration-300 ${isScrolled ? "text-[#295A43] dark:text-white" : "text-white"}`}
-              />
-              {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#FDBE02] text-[#295A43] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                  {cartItems.length}
-                </span>
-              )}
+              <Button variant="ghost" size="icon" className="text-[#295A43] dark:text-white">
+                <ShoppingCart className="h-5 w-5" />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#FDBE02] text-[#295A43] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItems.length}
+                  </span>
+                )}
+                <span className="sr-only">Cart</span>
+              </Button>
             </Link>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-            >
-              {isMobileMenuOpen ? (
-                <X
-                  className={`w-6 h-6 transition-colors duration-300 ${isScrolled ? "text-[#295A43] dark:text-white" : "text-white"}`}
-                />
-              ) : (
-                <Menu
-                  className={`w-6 h-6 transition-colors duration-300 ${isScrolled ? "text-[#295A43] dark:text-white" : "text-white"}`}
-                />
-              )}
-            </button>
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
+            <div className="hidden md:block">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-white dark:bg-[#1D3F2F] shadow-lg"
-          >
-            <div className="container mx-auto px-4 py-4">
-              <nav className="flex flex-col space-y-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    href={link.path}
-                    className={`text-lg font-medium transition-colors duration-300 ${
-                      pathname === link.path
-                        ? "text-[#FDBE02]"
-                        : "text-[#295A43] hover:text-[#FDBE02] dark:text-white dark:hover:text-[#FDBE02]"
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </header>
   )
 }
