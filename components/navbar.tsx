@@ -58,7 +58,7 @@ export default function Navbar() {
               <span
                 className={`text-xl sm:text-2xl font-bold ${isScrolled ? "text-[#295A43] dark:text-white" : "text-[#295A43] dark:text-white"}`}
               >
-                Mango<span className="text-[#FDBE02]">Market</span>
+                আম<span className="text-[#FDBE02]">GO</span>
               </span>
             </Link>
           </div>
